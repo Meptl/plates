@@ -1,0 +1,12 @@
+variables:
+  - name: foo
+    description: Example variable
+    type: int
+  - name: bar
+    description: Second example variable
+    type: string
+
+# A collection of variables
+struct:
+  - foo
+  - bar

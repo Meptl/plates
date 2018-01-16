@@ -1,0 +1,9 @@
+[package]
+name = "plates"
+version = "0.1.0"
+authors = ["Christopher Chin <ctchin13@gmail.com>"]
+
+[dependencies]
+serde_yaml = "*"
+indextree = "*"
+itertools = "*"
