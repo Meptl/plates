@@ -6,14 +6,28 @@ pub enum ScalarType {
     Integer,
     Float,
     Char,
-    String,
+    String, // TODO: Is this not a struct?
     Function,
+}
+
+/// For now this will just catastrophicaly fail on invalid strings.
+impl<'a> From<&'a str> for ScalarType {
+    fn from(s: &str) -> ScalarType {
+        match s.as_ref() {
+            "int" | "integer" => ScalarType::Integer,
+            "float" | "double" => ScalarType::Float,
+            "char" => ScalarType::Integer,
+            "string" => ScalarType::String,
+            "fn" | "func" | "function" => ScalarType::Function,
+            _ => panic!("Unexpected value to convert to ScalarType")
+        }
+    }
 }
 
 /// Structure for variable information
 pub struct Variable {
-    name: Option<VariableName>,
-    vartype: ScalarType
+    pub name: Option<VariableName>,
+    pub vartype: ScalarType
 }
 
 impl Data for Variable {

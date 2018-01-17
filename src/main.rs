@@ -1,4 +1,5 @@
 #![feature(conservative_impl_trait)]
+#![feature(try_from)]
 extern crate serde_yaml;
 extern crate indextree;
 extern crate itertools;
@@ -23,7 +24,12 @@ fn main() {
     let file_name = std::env::args().skip(1).next().expect(USAGE);
     let file = File::open(&file_name).unwrap();
     let yaml: HashMap<String, Value> = serde_yaml::from_reader(&file).unwrap();
-    //let arena = Arena::new();
+    let mut arena = Arena::new();
+
+    let variables = yaml["variables"].as_sequence().unwrap();
+    for i in variables.into_iter() {
+        repr::decoder::variable(&mut arena, i.clone());
+    }
 
     //let output = class.as_represent().unwrap().represent(String::new());
     //println!("{}", output);

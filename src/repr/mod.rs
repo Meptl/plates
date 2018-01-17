@@ -3,6 +3,7 @@ pub(crate) mod output;
 pub(crate) mod util;
 
 pub mod variable;
+pub mod decoder;
 
 
 mod tree;
@@ -13,8 +14,8 @@ mod prelude {
     use ::indextree::Arena;
     use ::std::ops::Deref;
 
-    pub struct Program(Arena<Box<Data>>);
-    pub type Node = usize;
+    //pub struct Program(Arena<Box<Data>>);
+    pub type Program = (Arena<Box<Data>>);
 
     /// Common trait of all tree nodes.
     pub trait Data {
