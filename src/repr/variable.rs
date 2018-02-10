@@ -6,7 +6,7 @@ pub enum ScalarType {
     Integer,
     Float,
     Char,
-    String, // TODO: Is this not a struct?
+    String, // TODO: Decide if this is a struct or not.
     Function,
 }
 

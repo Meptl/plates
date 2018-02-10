@@ -1,13 +1,11 @@
 /// Module for representing data.
 pub(crate) mod output;
-pub(crate) mod util;
 
 pub mod variable;
 pub mod decoder;
 
 
-mod tree;
-pub use self::tree::DataStructure;
+//pub use self::tree::DataStructure;
 
 mod prelude {
     pub use super::output::Represent;

@@ -10,7 +10,6 @@ use std::fs::File;
 use std::collections::HashMap;
 use std::io::Write;
 use serde_yaml::Value;
-use repr::{DataStructure};
 use repr::variable::{Variable, VariableName};
 
 mod repr;
@@ -30,11 +29,4 @@ fn main() {
     for i in variables.into_iter() {
         repr::decoder::variable(&mut arena, i.clone());
     }
-
-    //let output = class.as_represent().unwrap().represent(String::new());
-    //println!("{}", output);
-    //
-    let v = VariableName { canonical: String::from("This_is_AnArbitrary string-sentence") };
-
-    println!("{}", v.snake_case());
 }
