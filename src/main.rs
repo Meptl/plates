@@ -13,20 +13,25 @@ use serde_yaml::Value;
 use repr::variable::{Variable, VariableName};
 
 mod repr;
+mod generator;
 
 const USAGE: &'static str = "
 Plates generates code from YAML.
-    Usage: plates YAML_FILE
+    Usage: plates YAML_FILE [OUTPUT_FILE]
 ";
 
 fn main() {
-    let file_name = std::env::args().skip(1).next().expect(USAGE);
-    let file = File::open(&file_name).unwrap();
-    let yaml: HashMap<String, Value> = serde_yaml::from_reader(&file).unwrap();
-    let mut arena = Arena::new();
+    let spec_name = std::env::args().skip(1).next().expect(USAGE);
+    let spec_file = File::open(&spec_name).unwrap();
+    let yaml: HashMap<String, Value> = serde_yaml::from_reader(&spec_file).unwrap();
 
-    let variables = yaml["variables"].as_sequence().unwrap();
-    for i in variables.into_iter() {
-        repr::decoder::variable(&mut arena, i.clone());
+    match repr::decoder::verify(&yaml) {
+        Some(err) => println!("Invalid specification: {}", err),
+        None => {},
     }
+
+    let variables = repr::decoder::variables(&yaml);
+
+    // todo: Take a CLI flag for language specification
+    generator::php::generate(std::io::stdout(), &variables);
 }

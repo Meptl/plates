@@ -1,6 +1,7 @@
 use super::prelude::*;
 use ::itertools::Itertools;
 use ::std::iter::repeat;
+use ::std::rc::Rc;
 
 pub enum ScalarType {
     Integer,
@@ -24,7 +25,12 @@ impl<'a> From<&'a str> for ScalarType {
     }
 }
 
-/// Structure for variable information
+/// Struct for collection of Variable
+pub struct Struct {
+    pub fields: Vec<Rc<Variable>>
+}
+
+/// Struct for variable information
 pub struct Variable {
     pub name: Option<VariableName>,
     pub vartype: ScalarType
