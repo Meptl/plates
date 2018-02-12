@@ -31,7 +31,8 @@ fn main() {
     }
 
     let variables = repr::decoder::variables(&yaml);
+    let native_nodes = variables.count();
 
     // todo: Take a CLI flag for language specification
-    generator::php::generate(std::io::stdout(), &variables);
+    generator::php::output(std::io::stdout(), &variables);
 }
