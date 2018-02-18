@@ -1,7 +1,8 @@
-use super::prelude::*;
 use ::itertools::Itertools;
+use ::indextree::NodeId;
 use ::std::iter::repeat;
 use ::std::rc::Rc;
+use super::prelude::*;
 
 pub enum ScalarType {
     Integer,
@@ -25,21 +26,23 @@ impl<'a> From<&'a str> for ScalarType {
     }
 }
 
-/// Struct for collection of Variable
-pub struct Struct {
-    pub fields: Vec<Rc<Variable>>
+/// Structure for collection of Variable
+pub struct Structure {
+    pub name: VariableName,
+    // Index into indextree
+    pub fields: Vec<NodeId>
 }
 
-/// Struct for variable information
+impl Data for Structure {
+}
+
+/// Variable information
 pub struct Variable {
-    pub name: Option<VariableName>,
+    pub name: VariableName,
     pub vartype: ScalarType
 }
 
 impl Data for Variable {
-    fn as_represent(&self) -> Option<&Represent> {
-        None
-    }
 }
 
 /// Structure for code representation of variables

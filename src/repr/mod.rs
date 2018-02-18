@@ -14,12 +14,14 @@ pub type Program = Arena<Box<prelude::Data>>;
 pub mod prelude {
     pub use super::output::Represent;
     /// Common trait of all tree nodes.
-    pub trait Data {
+    pub trait Data: ::mopa::Any {
         fn as_represent(&self) -> Option<&Represent> {
             None
         }
     }
+    mopafy!(Data);
 
     /// Common trait of all metadata.
     pub trait MetaData {}
 }
+

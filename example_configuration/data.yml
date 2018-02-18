@@ -8,11 +8,11 @@ variables:
 
 # A collection of variables
 structs:
-  - name: Foo
+  - name: baz
     description: Example struct
     fields:
         - foo
         - bar
 
 plugins:
-  - php
+  - php-getters

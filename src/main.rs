@@ -1,5 +1,7 @@
 #![feature(conservative_impl_trait)]
 #![feature(try_from)]
+#[macro_use]
+extern crate mopa;
 extern crate serde_yaml;
 extern crate indextree;
 extern crate itertools;
@@ -30,9 +32,17 @@ fn main() {
         None => {},
     }
 
-    let variables = repr::decoder::variables(&yaml);
-    let native_nodes = variables.count();
+    let mut data = Arena::new();
+    for variable in yaml["variables"].as_sequence().unwrap() {
+        let idx = repr::decoder::variable(&mut data, variable).unwrap();
+        println!("Added. {:?}", idx);
+    }
+    for structure in yaml["structs"].as_sequence().unwrap() {
+        let idx = repr::decoder::structure(&mut data, structure).unwrap();
+        println!("Added. {:?}", idx);
+    }
+    let native_nodes = data.len();
 
     // todo: Take a CLI flag for language specification
-    generator::php::output(std::io::stdout(), &variables);
+    generator::php::output(std::io::stdout(), &data);
 }
