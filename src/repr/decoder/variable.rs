@@ -18,6 +18,7 @@ pub fn variable(arena: &mut Program, spec: &Value) -> Result<NodeId, &'static st
     let var = Variable {
         name: VariableName { canonical: String::from(name) },
         vartype: VariableType::from(vartype),
+        description: Some(String::from(description))
     };
 
     Ok(arena.new_node(Box::new(var)))
@@ -28,7 +29,8 @@ pub fn structure(arena: &mut Program, spec: &Value) -> Result<NodeId, &'static s
     let description = spec["description"].as_str().unwrap_or("");
     let structure = Variable {
         name: VariableName { canonical: String::from(name) },
-        vartype: VariableType::Struct
+        vartype: VariableType::Struct,
+        description: Some(String::from(description))
     };
     let mut new_node = arena.new_node(Box::new(structure));
 

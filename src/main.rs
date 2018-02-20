@@ -36,11 +36,9 @@ fn main() {
     let mut data = Arena::new();
     for variable in yaml["variables"].as_sequence().unwrap() {
         let idx = repr::decoder::variable(&mut data, variable).unwrap();
-        println!("Added. {:?}", idx);
     }
     for structure in yaml["structs"].as_sequence().unwrap() {
         let idx = repr::decoder::structure(&mut data, structure).unwrap();
-        println!("Added. {:?}", idx);
     }
     let native_nodes = data.len();
 

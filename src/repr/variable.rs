@@ -4,6 +4,7 @@ use ::std::iter::repeat;
 use ::std::rc::Rc;
 use super::prelude::*;
 
+#[derive(PartialEq, Eq)]
 pub enum VariableType {
     Integer,
     Float,
@@ -31,7 +32,8 @@ impl<'a> From<&'a str> for VariableType {
 /// Variable information
 pub struct Variable {
     pub name: VariableName,
-    pub vartype: VariableType
+    pub vartype: VariableType,
+    pub description: Option<String>
 }
 
 impl Data for Variable {
