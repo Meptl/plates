@@ -5,6 +5,7 @@ extern crate mopa;
 extern crate serde_yaml;
 extern crate indextree;
 extern crate itertools;
+extern crate unindent;
 
 use indextree::Arena;
 use std::rc::Rc;

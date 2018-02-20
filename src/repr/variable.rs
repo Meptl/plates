@@ -4,42 +4,34 @@ use ::std::iter::repeat;
 use ::std::rc::Rc;
 use super::prelude::*;
 
-pub enum ScalarType {
+pub enum VariableType {
     Integer,
     Float,
     Char,
     String, // TODO: Decide if this is a struct or not.
     Function,
+    Struct
 }
 
 /// For now this will just catastrophicaly fail on invalid strings.
-impl<'a> From<&'a str> for ScalarType {
-    fn from(s: &str) -> ScalarType {
+impl<'a> From<&'a str> for VariableType {
+    fn from(s: &str) -> VariableType {
         match s.as_ref() {
-            "int" | "integer" => ScalarType::Integer,
-            "float" | "double" => ScalarType::Float,
-            "char" => ScalarType::Integer,
-            "string" => ScalarType::String,
-            "fn" | "func" | "function" => ScalarType::Function,
-            _ => panic!("Unexpected value to convert to ScalarType")
+            "int" | "integer" => VariableType::Integer,
+            "float" | "double" => VariableType::Float,
+            "char" => VariableType::Integer,
+            "string" => VariableType::String,
+            "fn" | "func" | "function" => VariableType::Function,
+            "struct" => VariableType::Struct,
+            _ => panic!("Unexpected value to convert to VariableType")
         }
     }
-}
-
-/// Structure for collection of Variable
-pub struct Structure {
-    pub name: VariableName,
-    // Index into indextree
-    pub fields: Vec<NodeId>
-}
-
-impl Data for Structure {
 }
 
 /// Variable information
 pub struct Variable {
     pub name: VariableName,
-    pub vartype: ScalarType
+    pub vartype: VariableType
 }
 
 impl Data for Variable {
