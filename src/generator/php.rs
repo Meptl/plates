@@ -3,6 +3,7 @@ use ::indextree::NodeId;
 use ::repr::Program;
 use ::repr::variable::{Variable, VariableType};
 use ::unindent::unindent;
+// TODO: We want these code segments to be stored somewhere...
 
 /// Create a preamble for php code.
 fn preamble() -> String {
@@ -37,24 +38,29 @@ pub fn output<T>(mut outstream: T, arena: &Program) where T: ::std::io::Write {
 
     for id in structs {
         let s = arena[id].data.downcast_ref::<Variable>().unwrap();
-        let class_name = s.name.camel_case();
         // Preamble
-        let mut output = format!("class {} {{\n", class_name);
+        let mut output = format!("class {} {{\n", s.name.camel_case());
         // Fields
         for child in id.children(arena).into_iter() {
             let var = arena[child].data.downcast_ref::<Variable>().unwrap();
             let declaration = format!("
             /**
              * {description}.
+             *
+             * @var {var_type}
              */
             private ${var_name};\n",
             description = var.description.as_ref().unwrap(),
+            var_type = var.vartype,
             var_name = var.name.lower_camel_case()
             );
             output.push_str(&declaration);
         }
         outstream.write(unindent(&output).as_bytes());
     }
+
+    // TODO: indentation
+    outstream.write(b"\n\n}\n");
 
     outstream.flush();
 }

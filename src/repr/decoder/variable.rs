@@ -4,6 +4,7 @@ use ::indextree::NodeId;
 use ::serde_yaml::Value;
 use ::std::collections::HashMap;
 use ::std::ops::Deref;
+use ::std::str::FromStr;
 use super::super::prelude::*;
 use super::super::Program;
 use super::super::variable::{VariableType, Variable, VariableName};
@@ -17,7 +18,7 @@ pub fn variable(arena: &mut Program, spec: &Value) -> Result<NodeId, &'static st
 
     let var = Variable {
         name: VariableName { canonical: String::from(name) },
-        vartype: VariableType::from(vartype),
+        vartype: VariableType::from_str(vartype).unwrap(),
         description: Some(String::from(description))
     };
 

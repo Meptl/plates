@@ -2,6 +2,7 @@ use ::itertools::Itertools;
 use ::indextree::NodeId;
 use ::std::iter::repeat;
 use ::std::rc::Rc;
+use ::std::fmt;
 use super::prelude::*;
 
 #[derive(PartialEq, Eq)]
@@ -14,10 +15,25 @@ pub enum VariableType {
     Struct
 }
 
+impl VariableType {
+    fn as_str(&self) -> &str {
+        match (*self) {
+            VariableType::Integer => "integer",
+            VariableType::Float => "double",
+            VariableType::Char => "char",
+            VariableType::String => "string",
+            VariableType::Function => "fn",
+            VariableType::Struct => "struct",
+        }
+    }
+}
+
 /// For now this will just catastrophicaly fail on invalid strings.
-impl<'a> From<&'a str> for VariableType {
-    fn from(s: &str) -> VariableType {
-        match s.as_ref() {
+impl ::std::str::FromStr for VariableType {
+    //todo: Errortypes
+    type Err = String;
+    fn from_str(s: &str) -> Result<VariableType, Self::Err> {
+        Ok(match s.as_ref() {
             "int" | "integer" => VariableType::Integer,
             "float" | "double" => VariableType::Float,
             "char" => VariableType::Integer,
@@ -25,7 +41,13 @@ impl<'a> From<&'a str> for VariableType {
             "fn" | "func" | "function" => VariableType::Function,
             "struct" => VariableType::Struct,
             _ => panic!("Unexpected value to convert to VariableType")
-        }
+        })
+    }
+}
+
+impl fmt::Display for VariableType {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.as_str().fmt(f)
     }
 }
 
@@ -39,48 +61,78 @@ pub struct Variable {
 impl Data for Variable {
 }
 
-/// Structure for code representation of variables
+/// Naively cache the first return value of the expression.
+///
+/// Note that the return value of the function is changed to a reference.
+macro_rules! cached {
+    (pub fn $name:ident (&$self:ident) -> $ret:ty $body:block) => {
+        pub fn $name(&$self) -> &$ret {
+            static mut cached: Option<$ret> = None;
+            unsafe {
+                if let Some(ref c) = cached {
+                    return c;
+                }
+            }
+            let val = $body;
+            unsafe {
+                cached = Some(val);
+                cached.as_ref().unwrap()
+            }
+        }
+    };
+}
+
+/// Various representations of a variable identifier.
+///
+/// Note that the use of the cached! macro is safe here because this structure is
+/// immutable after initialization.
 pub struct VariableName {
     /// Any string representation of the variable
-    pub canonical: String,
+    pub canonical: String
 }
 
 impl VariableName {
-    /// Returns the CamelCase representation of canonical. Reallocates
-    pub fn camel_case(&self) -> String {
-        let mut r = String::new();
-        for token in self.tokens() {
-            for (i, c) in token.chars().enumerate() {
-                match i {
-                    0 => r.extend(c.to_uppercase()),
-                    _ => r.extend(c.to_lowercase()),
+    /// Returns the CamelCase representation of canonical
+    cached! {
+        pub fn camel_case(&self) -> String {
+            let mut output = String::new();
+            for token in self.tokens() {
+                for (i, c) in token.chars().enumerate() {
+                    match i {
+                        0 => output.extend(c.to_uppercase()),
+                        _ => output.extend(c.to_lowercase()),
+                    }
                 }
             }
+            output
         }
-        r
     }
 
-    /// Returns the lowerCamelCase representation of canonical. Reallocates
-    pub fn lower_camel_case(&self) -> String {
-        let mut r = String::new();
-        for (i, token) in self.tokens().enumerate() {
-            for (j, c) in token.chars().enumerate() {
-                match (i, j) {
-                    (0, _) => r.extend(c.to_lowercase()),
-                    (_, 0) => r.extend(c.to_uppercase()),
-                    _ => r.extend(c.to_lowercase()),
+    /// Returns the lowerCamelCase representation of canonical
+    cached! {
+        pub fn lower_camel_case(&self) -> String {
+            let mut output = String::new();
+            for (i, token) in self.tokens().enumerate() {
+                for (j, c) in token.chars().enumerate() {
+                    match (i, j) {
+                        (0, _) => output.extend(c.to_lowercase()),
+                        (_, 0) => output.extend(c.to_uppercase()),
+                        _ => output.extend(c.to_lowercase()),
+                    }
                 }
             }
+            output
         }
-        r
     }
 
-    /// Returns the snake_case representation of canonical. Reallocates
-    pub fn snake_case(&self) -> String {
-        self.tokens()
-            .map(|s| s.to_lowercase())
-            .intersperse(String::from("_"))
-            .collect()
+    /// Returns the snake_case representation of canonical
+    cached! {
+        pub fn snake_case(&self) -> String {
+            self.tokens()
+                .map(|s| s.to_lowercase())
+                .intersperse(String::from("_"))
+                .collect()
+        }
     }
 
     /// Returns an iterator for the tokens of canonical
@@ -92,7 +144,6 @@ impl VariableName {
 }
 
 use std::str::Chars;
-
 
 pub trait SplitCamelCaseExt<'a>: Iterator + Sized {
     fn split_camel_case(self) -> SplitCamelCase<'a>;
