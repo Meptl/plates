@@ -23,10 +23,10 @@ pub fn output<T>(mut outstream: T, arena: &Program) where T: ::std::io::Write {
     // todo: My indexree will probably store a HashMap for these. For now another linear search.
     let mut structs = Vec::new();
     for i in 0..arena.len() {
-        let i = NodeId::from(i);
+        let i = NodeId(i);
         let is_struct = {
             let ref node = arena[i];
-            match node.data.downcast_ref::<Variable>() {
+            match node.downcast_ref::<Variable>() {
                 Some(var) => var.vartype == VariableType::Struct,
                 None => false
             }
@@ -37,12 +37,12 @@ pub fn output<T>(mut outstream: T, arena: &Program) where T: ::std::io::Write {
     }
 
     for id in structs {
-        let s = arena[id].data.downcast_ref::<Variable>().unwrap();
+        let s = arena[id].downcast_ref::<Variable>().unwrap();
         // Preamble
         let mut output = format!("class {} {{\n", s.name.camel_case());
         // Fields
         for child in id.children(arena).into_iter() {
-            let var = arena[child].data.downcast_ref::<Variable>().unwrap();
+            let var = arena[child].downcast_ref::<Variable>().unwrap();
             let declaration = format!("
             /**
              * {description}.

@@ -40,10 +40,10 @@ pub fn structure(arena: &mut Program, spec: &Value) -> Result<NodeId, &'static s
         // todo: linear search may not be ideal.
         // Find the variable in the arena.
         for i in 0..arena.len() {
-            let i = NodeId::from(i);
+            let i = NodeId(i);
             let is_child = {
-                let ref node = arena[i];
-                match node.data.downcast_ref::<Variable>() {
+                let ref data = arena[i];
+                match data.downcast_ref::<Variable>() {
                     Some(var) => var.name.canonical == var_name,
                     None => false
                 }
