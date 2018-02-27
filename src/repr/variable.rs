@@ -28,7 +28,6 @@ impl VariableType {
     }
 }
 
-/// For now this will just catastrophicaly fail on invalid strings.
 impl ::std::str::FromStr for VariableType {
     //todo: Errortypes
     type Err = String;
