@@ -64,3 +64,10 @@ pub fn output<T>(mut outstream: T, arena: &Program) where T: ::std::io::Write {
 
     outstream.flush();
 }
+
+pub fn construct(data: &DataTable) -> Program {
+    let program = &mut Arena::new();
+    let mut root = program.new_node(Code { ..Default::default() });
+    root.append(program, Code::new("<?php>"));
+    root.append(program, Code::new(r#"namespace \Blah"#));
+}

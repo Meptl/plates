@@ -3,16 +3,46 @@ pub mod php;
 
 pub type Program = Arena<Code>;
 
+#[derive(Default)]
 pub struct Code {
-    pub preamble: String
-    pub body: String
-    pub postamble: String
+    pub preamble: Option<String>
+    pub postamble: Option<String>
 }
 
-pub struct Output {
+impl Code {
+    pub fn new(pre: &str) -> Code {
+        Code {
+            preamble: Some(String::from(pre)),
+            ..Default::default()
+        }
+    }
 
+    pub fn new_code(pre: &str, post: &str) -> Code {
+        Code {
+            preamble: Some(String::from(pre),
+            postamble: Some(String::from(post),
+        }
+    }
+
+    pub fn new_empty() -> Code {
+        Default::default()
+    }
 }
 
-pub fn generate<T>(mut outstream: T, arena: &Program) where T: ::std::io::Write {
-    // todo: traverse tree and output.
+/// Write a node's code output.
+pub fn generate_node<T>(outstream: &mut T, arena: &Program, id: NodeId, depth) where T: ::std::io::Write {
+    outsream.write(format!("{:indent$}", "", indent=depth));
+    let code = arena[id];
+    outstream.write(code.preamble);
+    for child in id.children(arena) {
+        generate_node(outstream, arena, child);
+    }
+    outstream.write(code.postamble);
+}
+
+/// Print the arena to outstream.
+pub fn generate<T>(mut outstream: T, arena: &Program, root: NodeId) where T: ::std::io::Write {
+    // Assume the first node is the root.
+    generate_node(&mut outstream, arena, root);
+    outstream.flush();
 }
