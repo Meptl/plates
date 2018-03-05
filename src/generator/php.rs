@@ -70,4 +70,9 @@ pub fn construct(data: &DataTable) -> Program {
     let mut root = program.new_node(Code { ..Default::default() });
     root.append(program, Code::new("<?php>"));
     root.append(program, Code::new(r#"namespace \Blah"#));
+
+    for s in data.structures(program) {
+        root.append(program, Code::new("public class");
+    }
+    root.append(program, Code
 }

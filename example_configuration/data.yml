@@ -1,18 +1,26 @@
-variables:
-  - name: foo
-    description: Example variable
+data:
+  - name: foobar
+    description: Example scalar type
     type: int
-  - name: bar
-    description: Second example variable
-    type: string
-
-# A collection of variables
-structs:
-  - name: baz
+  - name: foo
     description: Example struct
+    fields:
+        - name: foo
+          description: Example field.
+          type: int
+  - name: bar
+    description: Example nested struct
+    fields:
+        - name: foo
+          description: Example field.
+          type: int
+        - foo
+  - name: baz
     fields:
         - foo
         - bar
+        - foobar
+      # - bar.foo???
 
-plugins:
-  - php-getters
+modules:
+  - fn-getters
